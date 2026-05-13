@@ -165,6 +165,7 @@ char judge(int headx,int heady,int foodx,int foody){
 		}
 		//������һ��������������±������Ļ���ÿ���ڶ�queue��������ʱ�±��п��ܻ���ң���͵���par_idx�������⣬��׼������ʹ��ָ�����׷�١� 
 		for(int i=0;i<4;i++){
+			//这个进入队列的点的筛选逻辑可以改一下，仍然是按照f的大小依次找，只是f的计算逻辑发生了变化，根据该点四周的障碍物的数量来确定。
 			int tempx=temp1.x+dir[i][0];
 			int tempy=temp1.y+dir[i][1];
 			if((tempx>=0&&tempx<=19)&&(tempy>=0&&tempy<=19)&&!visited[tempx][tempy]&&(map[tempx][tempy]=='.'||map[tempx][tempy]=='F')){
@@ -185,7 +186,13 @@ char judge(int headx,int heady,int foodx,int foody){
 		queue[ans2]=temp2;
 		top--;
 	}
-	return 'W';
+	return 'X';
+}
+bool can_reach_tail_after_eating(){
+	
+}
+char wander(int headx,int heady){
+//寻找蛇头旁边的空格，找空格的地方走（非蛇身，非障碍物，非边界）。
 }
 int main()
 { 
@@ -243,6 +250,42 @@ int main()
 	char c;//cͨ��һ���㷨�����õ�'w','s,'a','d'�е�һ����
 	//��Ϊһ��ʼ��ʳ�������̺����˵�ͼ������޷���whileѭ�����ϣ�������Ҫ��whileѭ��������ִ��һ�����ж��Ĳ��� 	
 	c=judge(head.x,head.y,foodx,foody);
+	if(c!='X'){
+		int nx;
+		int ny;
+		switch(c){
+		    case 'W':
+			    nx=head.x+dir[0][0];
+			    ny=head.y+dir[0][1];
+			    break;
+		    case 'S':
+			    nx=head.x+dir[1][0];
+			    ny=head.y+dir[1][1];
+			    break;
+		    case 'A':
+			    nx=head.x+dir[2][0];
+			    ny=head.y+dir[2][1];
+			    break;
+		    case 'D':
+			    nx=head.x+dir[3][0];
+			    ny=head.y+dir[3][1];
+			    break;		
+	    }
+		if(map[nx][ny]=='F'){
+			if(!can_reach_tail_after_eating()){
+				c=judge(head.x,head.y,ptrtail->x,ptrtail->y);
+				if(c=='X'){
+					c=wander(head.x,head.y);
+				}
+			}
+		}
+	}
+	else{
+        c=judge(head.x,head.y,ptrtail->x,ptrtail->y);
+		if(c=='X'){
+			c=wander(head.x,head.y);
+		}
+	}
 	printf("%c\n",c);
 	printf("%d\n",score);
 	cnt2++;
@@ -341,8 +384,7 @@ int main()
 		}
 		if(sx!=20)
 		{
-			foodx=sx;
-			foody=sy;
+			foodx=sx; 
 			map[foodx][foody]='F';
 		}
 	    c=judge(head.x,head.y,foodx,foody); 
@@ -405,4 +447,4 @@ int main()
 	return 0;
 }
 //4.24��������������Ĺ��죬����������while�����������������̵������������������ϡ� 
-//4.25�����ƶ��������޸�map�Ĳ����Լ�������ֲ����ߣ����ߵ��ǲ�������������������������� 
+//4.25����������ƶ��������޸�map�Ĳ����Լ�������ֲ����ߣ����ߵ��ǲ�������������������������� 
